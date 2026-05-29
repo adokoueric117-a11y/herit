@@ -1,0 +1,65 @@
+[
+  {
+    "id": 1,
+    "nom": "Lomé",
+    "region": "Maritime",
+    "lat": 6.1319,
+    "lng": 1.2228,
+    "histoire": "Capitale du Togo fondée au XIXe siècle par les Éwé, elle est devenue le centre politique et économique du pays.",
+    "anecdote": "C'est la seule capitale au monde située à la frontière immédiate d'un autre pays (le Ghana)."
+  },
+  {
+    "id": 2,
+    "nom": "Aného",
+    "region": "Maritime",
+    "lat": 6.2272,
+    "lng": 1.5947,
+    "histoire": "Ancienne capitale coloniale du Togo à deux reprises, c'est le centre spirituel du peuple Guin-Mina.",
+    "anecdote": "Chaque année, la fête d'Epé-Ekpé y célèbre la prise de la pierre sacrée (Kpessosso)."
+  },
+  {
+    "id": 3,
+    "nom": "Kpalimé",
+    "region": "Plateaux",
+    "lat": 6.9014,
+    "lng": 0.6306,
+    "histoire": "Située au cœur d'une région montagneuse et forestière, elle s'est développée grâce au commerce du café et du cacao.",
+    "anecdote": "C'est la capitale de l'artisanat togolais et le point de départ pour gravir le Mont Agou, le plus haut sommet du pays."
+  },
+  {
+    "id": 4,
+    "nom": "Atakpamé",
+    "region": "Plateaux",
+    "lat": 7.5256,
+    "lng": 1.1303,
+    "histoire": "Construite sur des collines, cette ville historique était un refuge fortifié pendant les guerres tribales.",
+    "anecdote": "La ville est célèbre pour ses danseurs sur échasses (Tchébé) qui réalisent des acrobaties impressionnantes."
+  },
+  {
+    "id": 5,
+    "nom": "Sokodé",
+    "region": "Centrale",
+    "lat": 8.9833,
+    "lng": 1.1333,
+    "histoire": "Deuxième ville du pays, elle s'est développée à l'intersection des anciennes routes commerciales de la noix de kola.",
+    "anecdote": "C'est le bastion des cavaliers Tem et de la célèbre danse du feu (Adossa-Gadao)."
+  },
+  {
+    "id": 6,
+    "nom": "Kara",
+    "region": "Kara",
+    "lat": 9.5511,
+    "lng": 1.1861,
+    "histoire": "Grand carrefour du nord du pays, la ville a connu un essor rapide au cours des dernières décennies.",
+    "anecdote": "Chaque mois de juillet, la ville s'anime pour les luttes traditionnelles Evala, un rite d'initiation des jeunes Kabyè."
+  },
+  {
+    "id": 7,
+    "nom": "Dapaong",
+    "region": "Savanes",
+    "lat": 10.8583,
+    "lng": 0.2056,
+    "histoire": "Située à l'extrême nord, cette ville stratégique gère les échanges transfrontaliers avec le Burkina Faso et le Bénin.",
+    "anecdote": "Elle abrite les grottes et greniers de Nok, incrustés dans des falaises qui servaient de refuges de guerre."
+  }
+]
