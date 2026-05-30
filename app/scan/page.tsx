@@ -3,11 +3,22 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Camera, Upload, Sparkles, Loader2, Volume2, VolumeX } from 'lucide-react';
 
+interface PredictionResult {
+  prediction_status: string;
+  data: {
+    monument: string;
+    histoire: string;
+    latitude: number;
+    longitude: number;
+    source: string;
+  };
+}
+
 export default function ScanPage() {
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<PredictionResult | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // États pour la synthèse vocale (TTS)
@@ -33,7 +44,7 @@ export default function ScanPage() {
     }
   };
 
-  // Envoyer l'image à notre API Next.js
+  // Envoyer l'image à notre API Next.js (api/scan)
   const handleScan = async () => {
     if (!image) return;
     setLoading(true);
@@ -43,6 +54,7 @@ export default function ScanPage() {
     formData.append('image', image);
 
     try {
+      // Appel ciblé sur /api/scan
       const res = await fetch('/api/scan', {
         method: 'POST',
         body: formData,
@@ -76,7 +88,7 @@ export default function ScanPage() {
       const utterance = new SpeechSynthesisUtterance(texteALire);
       utterance.lang = selectedLang;
 
-      // Ajustement de la vitesse de lecture (1 = normal, 0.9 = légèrement plus posé)
+      // Ajustement de la vitesse de lecture (1 = normal, 0.95 = posé pour un guide)
       utterance.rate = 0.95;
 
       utterance.onend = () => setIsSpeaking(false);
@@ -142,7 +154,7 @@ export default function ScanPage() {
         <button
           onClick={handleScan}
           disabled={loading}
-          className="mt-6 w-full bg-linear-to-r from-green-600 to-yellow-500 text-white font-bold py-3 rounded-2xl flex items-center justify-center gap-2 cursor-pointer shadow-md hover:opacity-90 transition disabled:opacity-50"
+          className="mt-6 w-full bg-gradient-to-r from-green-600 to-yellow-500 text-white font-bold py-3 rounded-2xl flex items-center justify-center gap-2 cursor-pointer shadow-md hover:opacity-90 transition disabled:opacity-50"
         >
           {loading ? (
             <>
@@ -174,7 +186,7 @@ export default function ScanPage() {
                   setSelectedLang(e.target.value);
                   if (isSpeaking) { window.speechSynthesis.cancel(); setIsSpeaking(false); }
                 }}
-                className="text-xs font-bold text-gray-700 bg-transparent px-2 py-1 outline-hidden cursor-pointer"
+                className="text-xs font-bold text-gray-700 bg-transparent px-2 py-1 outline-none cursor-pointer"
               >
                 <option value="fr-FR">🇫🇷 FR</option>
                 <option value="en-US">🇺🇸 EN</option>
@@ -205,8 +217,10 @@ export default function ScanPage() {
             <span className="bg-green-100 px-3 py-1 rounded-full">
               📍 Lat: {result.data.latitude} | Lon: {result.data.longitude}
             </span>
-            <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full capitalize">
-              🗄️ Source: {result.data.source.replace('_', ' ')}
+            <span className={`px-3 py-1 rounded-full text-white ${
+              result.data.source === 'local_database' ? 'bg-green-600' : 'bg-yellow-600'
+            }`}>
+              🗄️ Source: {result.data.source === 'local_database' ? 'Base Locale' : 'IA Générative'}
             </span>
           </div>
         </div>
