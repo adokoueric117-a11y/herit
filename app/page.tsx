@@ -15,7 +15,7 @@ const NavLiens = [
 const Boutons = [
   {id:1, label: 'Scan monument', lien: 'scan/', icon: <Sparkles className='p-0.5 md:p-0'/>},
   {id:2, label: 'Patrimoine culinaire', lien: 'cuisine/', icon: <ForkKnifeCrossed className='p-0.5 md:p-0'/>},
-  {id:3, label: 'Sites touristiques', lien: 'sites_touristiques/', icon: <LocateFixed className='p-0.5 md:p-0'/>},
+  {id:3, label: 'Sites touristiques', lien: 'lieux_touristiques/', icon: <LocateFixed className='p-0.5 md:p-0'/>},
 ]
 
 const EtapesApp = [
