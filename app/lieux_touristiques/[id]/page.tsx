@@ -2,7 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-// Importation du tableau et de son interface de typage
+
 import SitesTour from '@/app/LieuxT/site' 
 
 interface PageProps {
@@ -12,7 +12,7 @@ interface PageProps {
 }
 
 export default async function SiteDetailPage({ params }: PageProps) {
-  // 1. On attend que params soit résolu (Spécificité Next.js récent)
+
   const resolvedParams = await params
 
   // 2. On cherche le lieu qui possède l'id présent dans l'URL
@@ -34,7 +34,7 @@ export default async function SiteDetailPage({ params }: PageProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start bg-base-100 shadow-2xl rounded-3xl overflow-hidden border border-base-200 p-6 md:p-8">
         
         {/* COLONNE GAUCHE : L'Image du Site */}
-        <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] rounded-2xl overflow-hidden shadow-md group">
+        <div className="relative w-full h-75 sm:h-100 md:h-125 rounded-2xl overflow-hidden shadow-md group">
           <Image
             src={site.image}
             alt={site.nom}

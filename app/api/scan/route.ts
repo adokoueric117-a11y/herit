@@ -3,9 +3,11 @@ import { NextResponse } from 'next/server';
 export async function POST(request: Request) {
   try {
     const formData = await request.formData();
-    const imageFile = formData.get('image'); // 'image' doit correspondre au nom du champ envoyé par le formulaire frontend
+    
+    // En TypeScript, on force le type avec "as File | null" pour pouvoir manipuler le fichier proprement
+    const imageFile = formData.get('image') as File | null; 
 
-    // 1. Vérification de la présence du fichier
+    // 1. Vérification de la présence et de la validité du fichier
     if (!imageFile || !(imageFile instanceof Blob)) {
       return NextResponse.json({ error: "Aucune image valide fournie" }, { status: 400 });
     }
@@ -23,21 +25,20 @@ export async function POST(request: Request) {
 
     // 3. Préparation du formulaire multipart pour FastAPI
     const fastapiFormData = new FormData();
-    // 'file' correspond exactement au nom de l'argument dans votre fonction Python: predict_monument(file: UploadFile)
+    
+    // On ajoute le fichier. 'file' correspond à l'argument attendu côté Python (FastAPI)
     fastapiFormData.append('file', imageFile); 
 
     // 4. Appel à la route "/predict" de FastAPI avec l'en-tête de sécurité
     const response = await fetch(`${fastapiBaseUrl}/predict`, {
       method: 'POST',
       headers: {
-        // 'herit' correspond à la variable cle_api = "herit" configurée dans votre FastAPI
         'herit': secretKey 
       },
       body: fastapiFormData,
-      // ⚠️ Rappel : On ne force pas le Content-Type. Fetch s'en occupe automatiquement pour le FormData.
     });
 
-    // 5. Gestion des erreurs renvoyées par le backend
+    // 5. Gestion des erreurs renvoyées par le backend FastAPI
     if (!response.ok) {
       const errorDetail = await response.text();
       return NextResponse.json(
@@ -46,11 +47,14 @@ export async function POST(request: Request) {
       );
     }
 
-    // 6. Succès : renvoi direct des données de prédiction (avec la source, l'histoire, la position...)
+    // 6. Succès : renvoi direct des données de prédiction à votre composant Client
     const data = await response.json();
     return NextResponse.json(data);
 
   } catch (error: any) {
-    return NextResponse.json({ error: error.message || "Erreur interne du serveur de route" }, { status: 500 });
+    return NextResponse.json(
+      { error: error.message || "Erreur interne du serveur de route" }, 
+      { status: 500 }
+    );
   }
 }

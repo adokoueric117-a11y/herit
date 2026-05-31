@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Camera, Upload, Sparkles, Loader2, Volume2, VolumeX } from 'lucide-react';
+import { Camera, Upload, Sparkles, Loader2, Volume2, VolumeX, MapPin, Globe } from 'lucide-react';
 
 interface PredictionResult {
   prediction_status: string;
@@ -54,7 +54,6 @@ export default function ScanPage() {
     formData.append('image', image);
 
     try {
-      // Appel ciblé sur /api/scan
       const res = await fetch('/api/scan', {
         method: 'POST',
         body: formData,
@@ -74,7 +73,7 @@ export default function ScanPage() {
     }
   };
 
-  // Gérer la lecture vocale (TTS)
+  // Gérer la lecture vocale (TTS) avec contextualisation de la langue
   const toggleSpeech = () => {
     if (!result || !result.data || !result.data.histoire) return;
 
@@ -82,13 +81,19 @@ export default function ScanPage() {
       window.speechSynthesis.cancel();
       setIsSpeaking(false);
     } else {
-      window.speechSynthesis.cancel(); // Sécurité : annule les anciennes lectures
+      window.speechSynthesis.cancel(); 
 
-      const texteALire = `${result.data.monument}. ${result.data.histoire}`;
+      let texteALire = `${result.data.monument}. ${result.data.histoire}`;
+      
+      // Sécurité UX : Si la langue n'est pas le FR, on prévient vocalement dans la bonne langue
+      if (selectedLang === 'en-US') {
+        texteALire = `Translation coming soon. Here is the title: ${result.data.monument}`;
+      } else if (selectedLang === 'es-ES') {
+        texteALire = `Traducción disponible pronto. Aquí está el título: ${result.data.monument}`;
+      }
+
       const utterance = new SpeechSynthesisUtterance(texteALire);
       utterance.lang = selectedLang;
-
-      // Ajustement de la vitesse de lecture (1 = normal, 0.95 = posé pour un guide)
       utterance.rate = 0.95;
 
       utterance.onend = () => setIsSpeaking(false);
@@ -113,9 +118,9 @@ export default function ScanPage() {
             <img src={preview} alt="Aperçu du monument" className="max-h-64 object-cover rounded-2xl mb-4 shadow" />
             <button 
               onClick={() => { setPreview(null); setImage(null); setResult(null); window.speechSynthesis.cancel(); setIsSpeaking(false); }}
-              className="text-xs text-red-500 font-semibold hover:underline"
+              className="text-xs text-red-500 font-semibold hover:underline cursor-pointer"
             >
-              {"Changer d'image"}
+             {" Changer d'image"}
             </button>
           </div>
         ) : (
@@ -133,18 +138,18 @@ export default function ScanPage() {
                 onClick={() => fileInputRef.current?.click()}
                 className="flex items-center gap-2 bg-green-700 text-white font-semibold py-2 px-4 rounded-xl text-sm cursor-pointer hover:bg-green-800 transition"
               >
-                <Upload size={16} /> Sélectionner
+                <Upload size={16} /> {"Ouvrir l'appareil / Galerie"}
               </button>
             </div>
           </div>
         )}
 
+        {/* MODIFICATION ICI : Suppression de capture="environment" pour laisser le choix de la Galerie */}
         <input 
           type="file" 
           ref={fileInputRef} 
           onChange={handleFileChange} 
           accept="image/*" 
-          capture="environment" 
           className="hidden" 
         />
       </div>
@@ -168,7 +173,7 @@ export default function ScanPage() {
         </button>
       )}
 
-      {/* Affichage des résultats de Gemini Vision / Base de données */}
+      {/* Affichage des résultats de Gemini Vision */}
       {result && result.data && (
         <div className="mt-8 p-6 bg-green-50 border border-green-100 rounded-3xl shadow-sm">
           
@@ -178,7 +183,7 @@ export default function ScanPage() {
               ✨ {result.data.monument}
             </h2>
             
-            {/* Barre de contrôle du TTS (Langues + Play/Stop) */}
+            {/* Barre de contrôle du TTS */}
             <div className="flex items-center gap-2 bg-white border border-green-200 p-1.5 rounded-xl shadow-xs self-start sm:self-auto">
               <select 
                 value={selectedLang}
@@ -207,22 +212,29 @@ export default function ScanPage() {
             </div>
           </div>
           
-          {/* Affichage de l'histoire en texte pur */}
-          <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-line font-medium bg-white p-4 rounded-2xl border border-green-100/50 shadow-xs">
+          {/* Affichage de l'histoire */}
+          <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-line font-medium bg-white p-4 rounded-2xl border border-green-100/50 shadow-xs mb-4">
             {result.data.histoire}
           </p>
 
-          {/* Badges pour la localisation et la source */}
-          <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold text-green-800">
-            <span className="bg-green-100 px-3 py-1 rounded-full">
-              📍 Lat: {result.data.latitude} | Lon: {result.data.longitude}
-            </span>
-            <span className={`px-3 py-1 rounded-full text-white ${
-              result.data.source === 'local_database' ? 'bg-green-600' : 'bg-yellow-600'
-            }`}>
-              🗄️ Source: {result.data.source === 'local_database' ? 'Base Locale' : 'IA Générative'}
-            </span>
+          {/* MODIFICATION ICI : Complétion des Badges de Localisation et Source coupés */}
+                   {/* Badges de métadonnées */}
+          <div className="flex flex-wrap gap-2 mt-4 text-xs">
+            {result.data.latitude && result.data.longitude && (
+              <span className="flex items-center gap-1 bg-white border border-gray-200 px-3 py-1.5 rounded-full text-gray-600 font-semibold shadow-xs">
+                <MapPin size={14} className="text-red-500" /> 
+                {/* Sécurité : Conversion forcée en Number avant le .toFixed() */}
+                {Number(result.data.latitude).toFixed(4)}, {Number(result.data.longitude).toFixed(4)}
+              </span>
+            )}
+            {result.data.source && (
+              <span className="flex items-center gap-1 bg-white border border-gray-200 px-3 py-1.5 rounded-full text-gray-600 font-semibold shadow-xs">
+                <Globe size={14} className="text-blue-500" /> 
+                Source : {result.data.source}
+              </span>
+            )}
           </div>
+
         </div>
       )}
     </div>
